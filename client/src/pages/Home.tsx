@@ -10,7 +10,6 @@ import { useDroneStream } from '@/context/DroneStreamContext';
 import { useDeviceOrientation } from '@/hooks/useDeviceOrientation';
 import { deviceToDroneOrientation } from '@/lib/orientationUtils';
 import { getDeviceName } from '@/lib/rtcUtils';
-import { nanoid } from 'nanoid';
 
 const Home: React.FC = () => {
   const { 
@@ -29,28 +28,32 @@ const Home: React.FC = () => {
   const { orientation, requestPermission } = useDeviceOrientation({
     onOrientationChange: (data) => {
       if (sessionId) {
-        // Convert device orientation to drone orientation
-        const droneOrientation = deviceToDroneOrientation({
-          alpha: data.alpha,
-          beta: data.beta,
-          gamma: data.gamma
-        });
-        
-        // Send telemetry data with dynamic values
-        // Convert null values to undefined to match TelemetryData type
-        const telemetryData = {
-          // Convert from number|null to number|undefined
-          pitch: droneOrientation.pitch || undefined,
-          roll: droneOrientation.roll || undefined,
-          yaw: droneOrientation.yaw || undefined,
-          // Default sensor values
-          battery: 100, // Default battery level
-          altitude: 0,  // Initialize at ground level
-          speed: 0,     // Initialize at standstill
-          signalStrength: navigator.onLine ? 100 : 0 // Basic online status
-        };
-        
-        sendTelemetry(telemetryData);
+        try {
+          // Convert device orientation to drone orientation
+          const droneOrientation = deviceToDroneOrientation({
+            alpha: data.alpha,
+            beta: data.beta,
+            gamma: data.gamma
+          });
+          
+          // Send telemetry data with dynamic values
+          // Convert null values to undefined to match TelemetryData type
+          const telemetryData = {
+            // Convert from number|null to number|undefined
+            pitch: droneOrientation.pitch === null ? undefined : droneOrientation.pitch,
+            roll: droneOrientation.roll === null ? undefined : droneOrientation.roll,
+            yaw: droneOrientation.yaw === null ? undefined : droneOrientation.yaw,
+            // Default sensor values
+            battery: 100, // Default battery level
+            altitude: 0,  // Initialize at ground level
+            speed: 0,     // Initialize at standstill
+            signalStrength: navigator.onLine ? 100 : 0 // Basic online status
+          };
+          
+          sendTelemetry(telemetryData);
+        } catch (error) {
+          console.error("Error sending telemetry data:", error);
+        }
       }
     }
   });
@@ -58,24 +61,28 @@ const Home: React.FC = () => {
   // Initialize session or join existing session
   useEffect(() => {
     const initializeSession = async () => {
-      // Check if session ID exists in URL
-      const urlParams = new URLSearchParams(window.location.search);
-      let currentSessionId = urlParams.get('session');
-      
-      if (!currentSessionId) {
-        // Create new session if none exists
-        try {
-          currentSessionId = await createSession();
-          // Update URL with new session ID
-          const newUrl = `${window.location.pathname}?session=${currentSessionId}`;
-          window.history.pushState({ path: newUrl }, '', newUrl);
-        } catch (error) {
-          console.error('Failed to create session:', error);
-          return;
+      try {
+        // Check if session ID exists in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        let currentSessionId = urlParams.get('session');
+        
+        if (!currentSessionId) {
+          // Create new session if none exists
+          try {
+            currentSessionId = await createSession();
+            // Update URL with new session ID
+            const newUrl = `${window.location.pathname}?session=${currentSessionId}`;
+            window.history.pushState({ path: newUrl }, '', newUrl);
+          } catch (error) {
+            console.error('Failed to create session:', error);
+            return;
+          }
         }
+        
+        setShowSetupModal(true);
+      } catch (error) {
+        console.error("Error in session initialization:", error);
       }
-      
-      setShowSetupModal(true);
     };
     
     if (!isSessionSetup && !sessionId) {
@@ -87,23 +94,26 @@ const Home: React.FC = () => {
   const handleSetupComplete = async (deviceType: 'primary' | 'camera' | 'drone') => {
     if (!sessionId) return;
     
-    // Request gyroscope permissions if primary device
-    if (deviceType === 'primary' && hasGyroscope) {
-      await requestPermission();
+    try {
+      // Request gyroscope permissions if primary device
+      if (deviceType === 'primary' && hasGyroscope) {
+        await requestPermission();
+      }
+      
+      // Register the device with the session
+      registerDevice(deviceType, getDeviceName());
+      setIsSessionSetup(true);
+      setShowSetupModal(false);
+    } catch (error) {
+      console.error("Error in device setup:", error);
     }
-    
-    // Register the device with the session
-    registerDevice(deviceType, getDeviceName());
-    setIsSessionSetup(true);
-    setShowSetupModal(false);
   };
   
   if (showSetupModal) {
     return (
-      <div className="bg-dark text-light font-roboto min-h-screen flex flex-col items-center justify-center p-4">
-        <div className="bg-dark-medium rounded-lg p-6 w-full max-w-md">
+      <div className="bg-slate-900 text-white min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="bg-slate-800 rounded-lg p-6 w-full max-w-md">
           <h2 className="text-xl font-medium mb-4 flex items-center">
-            <span className="material-icons mr-2">settings</span>
             Device Setup
           </h2>
           
@@ -112,25 +122,22 @@ const Home: React.FC = () => {
           <div className="grid grid-cols-1 gap-4">
             <button 
               onClick={() => handleSetupComplete('primary')}
-              className="bg-primary p-3 rounded-md flex items-center justify-center"
+              className="bg-blue-600 p-3 rounded-md flex items-center justify-center"
             >
-              <span className="material-icons mr-2">smartphone</span>
               Primary Control Device
             </button>
             
             <button 
               onClick={() => handleSetupComplete('camera')}
-              className="bg-secondary p-3 rounded-md flex items-center justify-center"
+              className="bg-green-600 p-3 rounded-md flex items-center justify-center"
             >
-              <span className="material-icons mr-2">videocam</span>
               Camera Device
             </button>
             
             <button 
               onClick={() => handleSetupComplete('drone')}
-              className="bg-accent p-3 rounded-md flex items-center justify-center"
+              className="bg-purple-600 p-3 rounded-md flex items-center justify-center"
             >
-              <span className="material-icons mr-2">flight</span>
               Simulate Drone (Debug)
             </button>
           </div>
@@ -145,7 +152,7 @@ const Home: React.FC = () => {
   }
   
   return (
-    <div className="bg-dark text-light font-roboto min-h-screen flex flex-col">
+    <div className="bg-slate-900 text-white min-h-screen flex flex-col">
       <AppHeader title="DroneStream" connectionStatus={connectionStatus} />
       
       <main className="flex-1 overflow-hidden flex flex-col">

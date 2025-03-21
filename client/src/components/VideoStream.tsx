@@ -126,64 +126,50 @@ const VideoStream: React.FC = () => {
       />
       
       {/* Video Controls Overlay */}
-      <div className="absolute bottom-0 left-0 right-0 bg-opacity-50 bg-dark p-2 flex justify-between items-center">
-        <div className="flex items-center">
+      <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-3 flex justify-between items-center">
+        <div className="flex items-center space-x-3">
           <Button 
             variant="ghost" 
             size="icon"
-            className={`rounded-full p-2 mr-2 ${streamStatus.isStreaming ? 'bg-danger' : 'bg-primary'}`}
+            className={`rounded-full ${streamStatus.isStreaming ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'}`}
             onClick={handleToggleStream}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              {streamStatus.isStreaming 
-                ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z M16 12H8" /> 
-                : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14v-4z" />
-              }
-            </svg>
+            {streamStatus.isStreaming ? '■' : '▶'}
           </Button>
           
           <Button 
             variant="ghost" 
             size="icon"
-            className="bg-dark-medium rounded-full p-2 mr-2"
+            className="bg-slate-700 hover:bg-slate-600 rounded-full"
             onClick={handleToggleMute}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              {streamStatus.isMuted 
-                ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
-                : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-              }
-            </svg>
+            {streamStatus.isMuted ? '🔇' : '🔊'}
           </Button>
           
           <Button 
             variant="ghost" 
             size="icon"
-            className="bg-secondary rounded-full p-2"
+            className="bg-slate-700 hover:bg-slate-600 rounded-full"
             onClick={switchCamera}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-            </svg>
+            🔄
           </Button>
         </div>
         
         <Button 
           variant="ghost" 
           size="icon"
-          className="bg-danger rounded-full p-2"
+          className="bg-red-600 hover:bg-red-700 rounded-full"
           onClick={emergencyStop}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
+          ⚡
         </Button>
       </div>
       
       {/* Stream Status Indicator */}
-      <div className="absolute top-2 right-2 bg-opacity-70 bg-dark px-2 py-1 rounded-md flex items-center">
+      <div className="absolute top-2 right-2 bg-black/60 px-3 py-1 rounded-md flex items-center">
         <span 
-          className={`w-3 h-3 rounded-full mr-2 ${streamStatus.isStreaming ? 'bg-accent' : 'bg-danger'}`}
+          className={`w-3 h-3 rounded-full mr-2 ${streamStatus.isStreaming ? 'bg-green-500' : 'bg-red-500'}`}
           aria-hidden="true"
         ></span>
         <span className="text-sm mr-2">{streamStatus.isStreaming ? 'Live' : 'Offline'}</span>
@@ -193,13 +179,9 @@ const VideoStream: React.FC = () => {
       </div>
       
       {/* Camera Selection Indicator */}
-      <div className="absolute top-2 left-2 bg-opacity-70 bg-dark px-2 py-1 rounded-md">
+      <div className="absolute top-2 left-2 bg-black/60 px-3 py-1 rounded-md">
         <span className="text-sm flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          {streamStatus.activeCamera === 'primary' ? 'Primary Camera' : 'Secondary Camera'}
+          📷 {streamStatus.activeCamera === 'primary' ? 'Primary Camera' : 'Secondary Camera'}
         </span>
       </div>
     </div>

@@ -29,20 +29,15 @@ const AppHeader: React.FC<AppHeaderProps> = ({
   };
   
   return (
-    <header className="bg-dark-medium py-2 px-4 flex justify-between items-center shadow-md">
+    <header className="bg-slate-800 py-2 px-4 flex justify-between items-center shadow-md">
       <div className="flex items-center">
-        <span className="mr-2">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-          </svg>
-        </span>
         <h1 className="text-xl font-medium">{title}</h1>
       </div>
       
       <div className="flex items-center">
         <div className="flex items-center mr-4">
           <span 
-            className={`w-3 h-3 rounded-full mr-2 ${connectionStatus.isConnected ? 'bg-accent' : 'bg-danger'}`}
+            className={`w-3 h-3 rounded-full mr-2 ${connectionStatus.isConnected ? 'bg-green-500' : 'bg-red-500'}`}
             aria-hidden="true"
           ></span>
           <span className="text-sm">{connectionStatus.text}</span>
@@ -51,7 +46,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
         <Button 
           variant="default"
           size="sm"
-          className="bg-primary hover:bg-primary/90 text-white"
+          className="bg-blue-600 hover:bg-blue-700 text-white"
           onClick={handleSettingsClick}
         >
           <Settings className="h-4 w-4 mr-1" />

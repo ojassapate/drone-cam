@@ -185,67 +185,58 @@ const MapDisplay: React.FC = () => {
   };
   
   return (
-    <div className="bg-dark-medium rounded-lg p-4 shadow-md col-span-1 md:col-span-2">
+    <div className="bg-slate-800 rounded-lg p-4 shadow-md col-span-1 md:col-span-2">
       <h2 className="text-lg font-medium mb-4 flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-        </svg>
         Location
       </h2>
       
       <div 
         ref={mapRef}
-        className="w-full aspect-square rounded-lg overflow-hidden bg-dark-light relative"
+        className="w-full aspect-square rounded-lg overflow-hidden bg-slate-700 relative"
         aria-label="Map showing drone and user locations"
       >
         {!mapLoaded && (
-          <div className="absolute inset-0 flex items-center justify-center bg-dark-light">
-            <div className="text-light">Loading map...</div>
+          <div className="absolute inset-0 flex items-center justify-center bg-slate-700">
+            <div className="text-gray-200">Loading map...</div>
           </div>
         )}
         
         {/* Map controls */}
-        <div className="absolute top-2 right-2 flex flex-col z-10">
+        <div className="absolute top-2 right-2 flex flex-col z-10 gap-2">
           <Button
             variant="secondary"
             size="icon"
-            className="bg-dark-medium mb-2"
+            className="bg-slate-800/80 hover:bg-slate-700"
             onClick={handleZoomIn}
             aria-label="Zoom in"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
+            +
           </Button>
           
           <Button
             variant="secondary"
             size="icon"
-            className="bg-dark-medium mb-2"
+            className="bg-slate-800/80 hover:bg-slate-700"
             onClick={handleZoomOut}
             aria-label="Zoom out"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 12H6" />
-            </svg>
+            -
           </Button>
           
           <Button
             variant="secondary"
             size="icon"
-            className="bg-dark-medium"
+            className="bg-slate-800/80 hover:bg-slate-700"
             onClick={handleRecenter}
             aria-label="Recenter map"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-            </svg>
+            ⊕
           </Button>
         </div>
         
         {/* Distance indicator */}
         {distance !== null && (
-          <div className="absolute bottom-2 left-2 bg-dark bg-opacity-70 p-2 rounded-md z-10">
+          <div className="absolute bottom-2 left-2 bg-slate-800/80 p-2 rounded-md z-10">
             <div className="text-xs text-gray-300 mb-1">Distance</div>
             <div className="text-sm font-medium">{formatDistance(distance)}</div>
           </div>

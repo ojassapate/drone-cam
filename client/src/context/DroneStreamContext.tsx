@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect, ReactNode } from "react";
+import React, { createContext, useState, useContext, useEffect, ReactNode, useRef } from "react";
 import { useWebSocket } from "../hooks/useWebSocket";
 import { MessageTypes } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
@@ -128,7 +128,7 @@ export const DroneStreamProvider: React.FC<DroneStreamProviderProps> = ({ childr
   });
   
   // Signaling message callbacks
-  const signalingCallbacks: ((type: string, from: string, payload: any) => void)[] = [];
+  const signalingCallbacks = useRef<((type: string, from: string, payload: any) => void)[]>([]);
   
   // Initialize WebSocket connection
   const wsHook = useWebSocket({
@@ -260,7 +260,7 @@ export const DroneStreamProvider: React.FC<DroneStreamProviderProps> = ({ childr
           case MessageTypes.ICE_CANDIDATE:
             // Forward signaling messages to registered callbacks
             if (message.deviceId) {
-              signalingCallbacks.forEach(callback => {
+              signalingCallbacks.current.forEach(callback => {
                 callback(message.type, message.deviceId, message.payload);
               });
             }
@@ -546,7 +546,7 @@ export const DroneStreamProvider: React.FC<DroneStreamProviderProps> = ({ childr
   
   // Register callback for signaling messages
   const onSignalingMessage = (callback: (type: string, from: string, payload: any) => void) => {
-    signalingCallbacks.push(callback);
+    signalingCallbacks.current.push(callback);
   };
   
   return (

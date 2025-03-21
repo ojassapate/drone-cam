@@ -49,76 +49,97 @@ const MapDisplay: React.FC = () => {
   useEffect(() => {
     if (!mapLoaded || !mapRef.current || mapInstanceRef.current) return;
     
-    // Create map
-    mapInstanceRef.current = window.L.map(mapRef.current, {
-      center: [51.505, -0.09], // Default center
-      zoom,
-      zoomControl: false // We'll add custom zoom controls
-    });
-    
-    // Add tile layer
-    window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(mapInstanceRef.current);
-    
-    // Create markers but don't add them yet
-    const droneIcon = window.L.divIcon({
-      html: `<div class="flex items-center justify-center bg-secondary text-white rounded-full p-1" style="width:32px;height:32px">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-              </svg>
-            </div>`,
-      className: '',
-      iconSize: [32, 32],
-      iconAnchor: [16, 16]
-    });
-    
-    const userIcon = window.L.divIcon({
-      html: `<div class="flex items-center justify-center bg-primary text-white rounded-full p-1" style="width:32px;height:32px">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
-            </div>`,
-      className: '',
-      iconSize: [32, 32],
-      iconAnchor: [16, 16]
-    });
-    
-    droneMarkerRef.current = window.L.marker([0, 0], { icon: droneIcon });
-    userMarkerRef.current = window.L.marker([0, 0], { icon: userIcon });
-    
-    // Get user's location
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          const location = { lat: latitude, lng: longitude };
-          setUserLocation(location);
-          
-          // Add user marker
-          userMarkerRef.current.setLatLng([latitude, longitude]).addTo(mapInstanceRef.current);
-          
-          // Center map on user
-          mapInstanceRef.current.setView([latitude, longitude], zoom);
-          
-          // If no drone location, use user location plus small offset for demo
-          if (!droneLocation) {
-            const demoLocation = { 
-              lat: latitude + 0.001, 
-              lng: longitude + 0.001 
-            };
-            setDroneLocation(demoLocation);
-            droneMarkerRef.current.setLatLng([demoLocation.lat, demoLocation.lng]).addTo(mapInstanceRef.current);
+    try {
+      // Create map
+      mapInstanceRef.current = window.L.map(mapRef.current, {
+        center: [51.505, -0.09], // Default center
+        zoom,
+        zoomControl: false // We'll add custom zoom controls
+      });
+      
+      // Add tile layer
+      window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(mapInstanceRef.current);
+      
+      // Create markers but don't add them yet
+      const droneIcon = window.L.divIcon({
+        html: `<div class="flex items-center justify-center bg-secondary text-white rounded-full p-1" style="width:32px;height:32px">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+              </div>`,
+        className: '',
+        iconSize: [32, 32],
+        iconAnchor: [16, 16]
+      });
+      
+      const userIcon = window.L.divIcon({
+        html: `<div class="flex items-center justify-center bg-primary text-white rounded-full p-1" style="width:32px;height:32px">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+              </div>`,
+        className: '',
+        iconSize: [32, 32],
+        iconAnchor: [16, 16]
+      });
+      
+      droneMarkerRef.current = window.L.marker([0, 0], { icon: droneIcon });
+      userMarkerRef.current = window.L.marker([0, 0], { icon: userIcon });
+      
+      // Get user's location
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            const location = { lat: latitude, lng: longitude };
+            setUserLocation(location);
+            
+            // Add user marker
+            userMarkerRef.current.setLatLng([latitude, longitude]).addTo(mapInstanceRef.current);
+            
+            // Center map on user
+            mapInstanceRef.current.setView([latitude, longitude], zoom);
+            
+            // If no drone location, use user location plus small offset for demo
+            if (!droneLocation) {
+              const demoLocation = { 
+                lat: latitude + 0.001, 
+                lng: longitude + 0.001 
+              };
+              setDroneLocation(demoLocation);
+              droneMarkerRef.current.setLatLng([demoLocation.lat, demoLocation.lng]).addTo(mapInstanceRef.current);
+            }
+          },
+          (error) => {
+            console.error("Error getting location:", error);
+            // Use default location
+            const defaultLocation = { lat: 51.505, lng: -0.09 };
+            setUserLocation(defaultLocation);
+            
+            if (userMarkerRef.current && mapInstanceRef.current) {
+              userMarkerRef.current.setLatLng([defaultLocation.lat, defaultLocation.lng]).addTo(mapInstanceRef.current);
+              
+              // For demo purposes, create a simulated drone location near the default location
+              const demoLocation = { 
+                lat: defaultLocation.lat + 0.001, 
+                lng: defaultLocation.lng + 0.001 
+              };
+              setDroneLocation(demoLocation);
+              
+              if (droneMarkerRef.current) {
+                droneMarkerRef.current.setLatLng([demoLocation.lat, demoLocation.lng]).addTo(mapInstanceRef.current);
+              }
+            }
           }
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-          // Use default location
-          const defaultLocation = { lat: 51.505, lng: -0.09 };
-          setUserLocation(defaultLocation);
-          userMarkerRef.current.setLatLng([defaultLocation.lat, defaultLocation.lng]).addTo(mapInstanceRef.current);
-        }
-      );
+        );
+      }
+    } catch (error) {
+      console.error("Error initializing map:", error);
+      // Reset map state to allow for another attempt
+      mapInstanceRef.current = null;
+      setMapLoaded(false);
     }
     
   }, [mapLoaded, zoom, droneLocation]);

@@ -84,37 +84,50 @@ export const useDeviceOrientation = (options: UseDeviceOrientationOptions = {}) 
   // Handle device orientation change event
   useEffect(() => {
     const handleOrientationChange = (event: DeviceOrientationEvent) => {
-      if (event.alpha === null || event.beta === null || event.gamma === null) {
-        return;
-      }
-      
-      const compassHeading = calculateCompassHeading(
-        event.alpha,
-        event.beta,
-        event.gamma
-      );
-      
-      const newOrientation: OrientationData = {
-        alpha: event.alpha,
-        beta: event.beta,
-        gamma: event.gamma,
-        absolute: event.absolute,
-        compassHeading
-      };
-      
-      setOrientation(newOrientation);
-      
-      if (onOrientationChange) {
-        onOrientationChange(newOrientation);
+      try {
+        // Handle case where orientation values are null
+        if (event.alpha === null || event.beta === null || event.gamma === null) {
+          return;
+        }
+        
+        const compassHeading = calculateCompassHeading(
+          event.alpha,
+          event.beta,
+          event.gamma
+        );
+        
+        const newOrientation: OrientationData = {
+          alpha: event.alpha,
+          beta: event.beta,
+          gamma: event.gamma,
+          absolute: event.absolute,
+          compassHeading
+        };
+        
+        setOrientation(newOrientation);
+        
+        if (onOrientationChange) {
+          onOrientationChange(newOrientation);
+        }
+      } catch (error) {
+        console.error("Error processing device orientation event:", error);
       }
     };
 
     if (permissionState === 'granted') {
-      window.addEventListener('deviceorientation', handleOrientationChange);
+      try {
+        window.addEventListener('deviceorientation', handleOrientationChange);
+      } catch (error) {
+        console.error("Error adding device orientation event listener:", error);
+      }
     }
 
     return () => {
-      window.removeEventListener('deviceorientation', handleOrientationChange);
+      try {
+        window.removeEventListener('deviceorientation', handleOrientationChange);
+      } catch (error) {
+        console.error("Error removing device orientation event listener:", error);
+      }
     };
   }, [permissionState, onOrientationChange]);
 

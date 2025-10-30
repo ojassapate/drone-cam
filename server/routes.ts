@@ -12,7 +12,14 @@ const connectedClients = new Map<string, {
   ws: WebSocket, 
   sessionId: string, 
   deviceType: string,
-  deviceName: string 
+  deviceName: string
+
+
+
+
+  
+
+  
 }>();
 
 // Function to broadcast a message to all clients in a session

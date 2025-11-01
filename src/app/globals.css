@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    touch-action: manipulation;
+    overscroll-behavior: none;
+  }
+
+  :root {
+    --background: 0 0% 7%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 15%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 212.2 96.4% 50.4%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 36 100% 50%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 120 60% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 85.7% 53.3%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 15%;
+    --input: 0 0% 20%;
+    --ring: 212.2 96.4% 50.4%;
+    --radius: 0.5rem;
+    
+    /* Chart colors */
+    --chart-1: 212.2 96.4% 50.4%;
+    --chart-2: 36 100% 50%;
+    --chart-3: 120 60% 50%;
+    --chart-4: 0 85.7% 53.3%;
+    --chart-5: 270 70% 60%;
+    
+    /* Sidebar colors */
+    --sidebar-background: 0 0% 10%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 212.2 96.4% 50.4%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 120 60% 50%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 15%;
+    --sidebar-ring: 212.2 96.4% 50.4%;
+  }
+}
